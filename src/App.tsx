@@ -39,12 +39,13 @@ function App() {
         const maxY = (viewMaxY + Math.abs(transform.y)) / transform.k;
         return (
             <>
-                <line x1={-maxX} y1={0} x2={maxX} y2={0} className="stroke-black stroke-[0.02px]" />
-                <line x1={0} y1={-maxY} x2={0} y2={maxY} className="stroke-black stroke-[0.02px]" />
+                <line x1={-maxX} y1={0} x2={maxX} y2={0} strokeWidth={0.02 / transform.k} className="stroke-black" />;
+                <line x1={0} y1={-maxY} x2={0} y2={maxY} strokeWidth={0.02 / transform.k} className="stroke-black" />;
             </>
         );
     }
     function drawMajorGridLines() {
+        if (transform.k < 0.08) return <></>;
         const maxX = (viewMaxX + Math.abs(transform.x)) / transform.k;
         const maxY = (viewMaxY + Math.abs(transform.y)) / transform.k;
         const xValues: number[] = [];
@@ -59,14 +60,10 @@ function App() {
         return (
             <>
                 {xValues.map((x) => {
-                    return (
-                        <line x1={x} y1={-maxY} x2={x} y2={maxY} className="stroke-gray-300 stroke-[0.02px]" />
-                    );
+                    return <line x1={x} y1={-maxY} x2={x} y2={maxY} strokeWidth={0.02 / transform.k} className="stroke-gray-300" />;
                 })}
                 {yValues.map((y) => {
-                    return (
-                        <line x1={-maxX} y1={y} x2={maxX} y2={y} className="stroke-gray-300 stroke-[0.02px]" />
-                    );
+                    return <line x1={-maxX} y1={y} x2={maxX} y2={y} strokeWidth={0.02 / transform.k} className="stroke-gray-300" />;
                 })}
             </>
         );
@@ -87,13 +84,18 @@ function App() {
         return (
             <>
                 {xValues.map((x) => {
-                    return (
-                        <line x1={x} y1={-maxY} x2={x} y2={maxY} className="stroke-gray-200 stroke-[0.01px]" />
-                    );
+                    return <line x1={x} y1={-maxY} x2={x} y2={maxY} strokeWidth={0.01 / transform.k} className="stroke-gray-200" />;
                 })}
                 {yValues.map((y) => {
                     return (
-                        <line x1={-maxX} y1={y} x2={maxX} y2={y} className="stroke-gray-200 stroke-[0.01px]" />
+                        <line
+                            x1={-maxX}
+                            y1={y}
+                            x2={maxX}
+                            y2={y}
+                            strokeWidth={0.01 / transform.k}
+                            className="stroke-gray-200"
+                        />
                     );
                 })}
             </>
@@ -101,12 +103,11 @@ function App() {
     }
     return (
         <>
-            <div className="flex flex-row justify-between">
+            <div className="flex flex-row w-screen h-screen">
                 <svg
                     ref={svgRef}
-                    height="100vh"
                     viewBox={`${-viewMaxX} ${-viewMaxY} ${viewWidth} ${viewHeight}`}
-                    className="border"
+                    className="h-screen grow"
                 >
                     <g transform={transform.toString()}>
                         <g transform="scale(1,-1)">
@@ -115,13 +116,19 @@ function App() {
                             {showAxes && drawAxes()}
                             {points.map((point, index) => {
                                 return (
-                                    <circle key={index} cx={point.x} cy={point.y} r={pointFillRadius} fill="black" />
+                                    <circle
+                                        key={index}
+                                        cx={point.x}
+                                        cy={point.y}
+                                        r={pointFillRadius / transform.k}
+                                        fill="black"
+                                    />
                                 );
                             })}
                         </g>
                     </g>
                 </svg>
-                <div className="flex flex-col grow space-y-4">
+                <div className="flex flex-col w-[250px] h-screen space-y-4 overflow-auto p-4 border-l shadow-md">
                     <div className="flex items-center space-x-2">
                         <input
                             type="checkbox"
@@ -160,6 +167,7 @@ function App() {
                     </div>
                 </div>
             </div>
+            <input type="text" className="w-full"/>
         </>
     );
 }
