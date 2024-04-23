@@ -7,14 +7,14 @@ class CharacterReader {
         this.position = 0;
     }
 
-    peek(length = 1) {
-        return this.command.substring(this.position, this.position + length);
+    peek(chars = 1) {
+        return this.command.substring(this.position, this.position + chars);
     }
-    jump(length = 1) {
-        if (this.position + length >= this.command.length) {
+    next(chars = 1) {
+        if (this.position + chars >= this.command.length) {
             this.position = this.command.length - 1;
         } else {
-            this.position += length;
+            this.position += chars;
         }
     }
     hasNext() {
