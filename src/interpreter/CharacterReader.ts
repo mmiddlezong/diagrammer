@@ -1,4 +1,4 @@
-class CharacterReader {
+export default class CharacterReader {
     command: string;
     position: number;
 
@@ -7,15 +7,20 @@ class CharacterReader {
         this.position = 0;
     }
 
-    peek(chars = 1) {
+    peek(chars = 1): string {
+        if (this.position + chars >= this.command.length) {
+            return this.command.substring(this.position);
+        }
         return this.command.substring(this.position, this.position + chars);
     }
-    next(chars = 1) {
+    next(chars = 1): string {
+        const returnValue = this.peek(chars);
         if (this.position + chars >= this.command.length) {
-            this.position = this.command.length - 1;
+            this.position = this.command.length;
         } else {
             this.position += chars;
         }
+        return returnValue;
     }
     hasNext() {
         return this.position < this.command.length;

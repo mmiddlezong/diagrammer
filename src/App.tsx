@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import * as d3 from "d3";
+import { tokenize } from "./interpreter/Lexer";
 
 type Point = {
     name: string;
@@ -20,6 +21,7 @@ function App() {
     const [showMinorGridLines, setShowMinorGridLines] = useState<boolean>(false);
     const [transform, setTransform] = useState<d3.ZoomTransform>(d3.zoomIdentity);
     const svgRef = useRef<SVGSVGElement>(null);
+    const [command, setCommand] = useState<string>("");
 
     // const viewHeight = viewWidth * window.innerHeight / window.innerWidth;
     // const viewMaxY = viewHeight / 2;
@@ -35,6 +37,15 @@ function App() {
             svg.call(zoomHandler);
         }
     }, []);
+
+    function handleCommand(e: React.KeyboardEvent<HTMLInputElement>) {
+        try {
+            console.log(tokenize(command));
+        } catch (e) {
+            console.log("Error while tokenizing command: " + e);
+        }
+        setCommand("");
+    }
 
     function drawAxes() {
         // Dynamically calculate max values based on zoom and pan
@@ -202,7 +213,20 @@ function App() {
                     </div>
                 </div>
                 <div className="border-t border-blue-400 h-6">
-                    <input autoFocus={true} type="text" className="w-full px-2 py-1 text-sm font-mono" />
+                    <input
+                        autoFocus={true}
+                        type="text"
+                        value={command}
+                        onChange={(e) => {
+                            setCommand(e.target.value);
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                handleCommand(e);
+                            }
+                        }}
+                        className="w-full px-2 py-1 text-sm font-mono"
+                    />
                 </div>
             </div>
         </>
